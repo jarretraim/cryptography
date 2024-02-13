@@ -1,0 +1,28 @@
+name: SBOM Generator
+permissions:
+    contents: write
+on:
+    push:
+        tags:
+            - '*.*'
+            - '*.*.*'
+
+jobs:
+    cyclone:
+        runs-on: ubuntu-latest
+        name: cyclonedx
+        container:
+            image: cdxgen
+            env:
+                FETCH_LICENSE: true
+            volumes:
+                - /tmp:/tmp
+                - ${{ github.workspace }}:/app:rw
+        steps:
+            - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+            - name: Run SBOM generation
+              run: -r /app -o /app/sbom/bom.json --required-only
+
+
+
+
